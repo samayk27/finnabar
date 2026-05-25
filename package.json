@@ -1,0 +1,10 @@
+{
+  "name": "finnabar",
+  "module": "index.ts",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
+}
