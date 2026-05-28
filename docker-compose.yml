@@ -7,12 +7,8 @@ services:
   ore:
     build: ./apps/ore
     env_file: .env
-    depends_on: [redis, chromadb]
+    depends_on: [redis]
 
   redis:
     image: redis:alpine
     ports: ["6379:6379"]
-
-  chromadb:
-    image: chromadb/chroma
-    ports: ["8000:8000"]
