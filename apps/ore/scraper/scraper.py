@@ -13,7 +13,11 @@ RELEVANT_KEYWORDS = [
 
 IRRELEVANT_KEYWORDS = [
     "brochure", "product", "catalog", "catalogue", "manual",
-    "policy", "certificate", "form", "application"
+    "policy", "certificate", "form", "application",
+    "environmental", "clearance", "fly-ash", "fly_ash",
+    "sustainability", "esop", "agm-notice", "agm_notice",
+    "postal-ballot", "voting", "court-convened",
+    "monitoring-report", "csr"
 ]
 
 def is_relevant_pdf(url):
@@ -24,8 +28,34 @@ def is_relevant_pdf(url):
     
     return has_relevant and not has_irrelevant
 
+def scrape_ore_json(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    
+    data = response.json()
+    pdf_links = set()
+    
+    def extract_links(obj):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if isinstance(value, str) and value.lower().endswith('.pdf'):
+                    absolute_url = urljoin(url, value)
+                    if is_relevant_pdf(absolute_url):
+                        pdf_links.add(absolute_url)
+                else:
+                    extract_links(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                extract_links(item)
 
-def scrape_ore(url):
+    extract_links(data)
+    return list(pdf_links)
+
+
+def scrape_ore_html(url):
     headers = {
         "User-Agent": "Mozilla/5.0"
     }
@@ -52,14 +82,20 @@ def main():
     with open('../links.json', 'r') as f:
         links = json.load(f)
     all_data = []
-    for company, urls in links.items():
-        if isinstance(urls, list):
-            for url in urls:
-                data = scrape_ore(url)
-                all_data.append({company: data})
-        else:
-            data = scrape_ore(urls)
-            all_data.append({company: data})
+    for company, items in links.items():
+        urls = [item for item in items if isinstance(item, str)]
+        type_dict = next((item for item in items if isinstance(item, dict)), {})
+        scrape_type = type_dict.get("type", "html")
+        
+        company_links = []
+        for url in urls:
+            if scrape_type == "json":
+                company_links.extend(scrape_ore_json(url))
+            else:
+                company_links.extend(scrape_ore_html(url))
+        
+        all_data.append({company: company_links})
+
 
     with open('ore_data.json', 'w') as f:
         json.dump(all_data, f, indent=4)

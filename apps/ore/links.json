@@ -1,0 +1,13 @@
+{
+    "eternal": ["https://www.zomato.com/webroutes/getPage?page_url=/investor-relations/financials", {"type": "json"}],
+    "hdfc": ["https://www.hdfcsec.com/article/financial-information-2931"
+    ,"https://www.hdfcsec.com/financial-information-2025", {"type": "html"}],
+    "tata-motors":[
+        "https://www.tatamotors.com/quarterly-results/",
+        "https://www.tatamotors.com/investors/",
+        {"type": "html"}
+    ],
+    "jiofin":["https://www.jfs.in/cms-api/jfs-pages?filters%5Bpathname%5D%5B%24eq%5D=%2Fjfs-home%2Ffinancials", {"type": "json"}],
+    "bajaj-auto":["https://www.bajajauto.com/investors/financial-and-operational-performance", {"type": "html"}],
+    "jsw-steel":["https://group.jsw.in/investors/investor-relations-steel", {"type": "html"}]
+}

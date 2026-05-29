@@ -1,0 +1,10 @@
+{
+  "name": "ore",
+  "private": true,
+  "scripts": {
+    "dev": "python3 main.py"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
