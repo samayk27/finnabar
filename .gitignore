@@ -43,3 +43,5 @@ apps/ore/.python-version
 apps/web/.next
 apps/web/node_modules
 apps/web/next-env.d.ts
+
+downloads/

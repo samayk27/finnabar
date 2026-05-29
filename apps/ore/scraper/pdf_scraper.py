@@ -1,9 +1,11 @@
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+from downloader import store
 
-import requests
 import json
+import os
 import re
+import requests
 
 RELEVANT_KEYWORDS = [
     "annual", "report", "quarterly", "results", "investor",
@@ -37,7 +39,6 @@ def scrape_ore_json(url):
     
     data = response.json()
     pdf_links = set()
-    
     def extract_links(obj):
         if isinstance(obj, dict):
             for key, value in obj.items():
@@ -61,7 +62,7 @@ def scrape_ore_html(url):
     }
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-
+    
     soup = BeautifulSoup(response.content, 'html.parser')
     pdf_links = set()
     for link in soup.find_all('a', href=True):
@@ -79,14 +80,14 @@ def scrape_ore_html(url):
     return list(pdf_links)
 
 def main():
-    with open('../links.json', 'r') as f:
+    links_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "links.json"))
+    with open(links_path, 'r') as f:
         links = json.load(f)
     all_data = []
     for company, items in links.items():
         urls = [item for item in items if isinstance(item, str)]
         type_dict = next((item for item in items if isinstance(item, dict)), {})
         scrape_type = type_dict.get("type", "html")
-        
         company_links = []
         for url in urls:
             if scrape_type == "json":
@@ -97,8 +98,7 @@ def main():
         all_data.append({company: company_links})
 
 
-    with open('ore_data.json', 'w') as f:
-        json.dump(all_data, f, indent=4)
+    store.download(all_data)
         
 if __name__ == "__main__":    
     main()
