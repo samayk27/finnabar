@@ -1,0 +1,1 @@
+for dir in apps/web apps/ore packages/database; do if [[ -e "$dir/.env" ]]; then echo "skip: $dir/.env already exists"; else ln -s ../../.env "$dir/.env" && echo "linked: $dir/.env"; fi; done
