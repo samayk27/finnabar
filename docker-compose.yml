@@ -15,22 +15,5 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
-  web:
-    build: ./apps/web
-    ports: ["3000:3000"]
-    env_file: .env
-
-  ore:
-    build: ./apps/ore
-    env_file: .env
-    depends_on: [redis]
-
-  redis:
-    image: redis:7
-    restart: unless-stopped
-    container_name: redis
-    ports:
-      - "6379:6379"
-
 volumes:
   pg_data:
